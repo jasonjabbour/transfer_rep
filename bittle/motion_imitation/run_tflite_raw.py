@@ -12,7 +12,7 @@ import tflite_runtime.interpreter as tflite
 import numpy as np
 import pickle
 import time
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 def test_tflite(saved_info, tflite_model='bittle_frozen_axis1'):
     '''Use tflite to make predictions and compare predictions to stablebaselines output'''
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         average_time+=trial_process_times_lst[i]
     average_time/=(trials*trials)
 
-    #Plot
-    plt.scatter(list(range(len(trial_process_times_lst))) ,trial_process_times_lst)
-    plt.show()
-    print('Average Time:',average_time)
+    # #Plot
+    # plt.scatter(list(range(len(trial_process_times_lst))) ,trial_process_times_lst)
+    # plt.show()
+    # print('Average Time:',average_time)
