@@ -1,4 +1,4 @@
 server_config = {
-    'client_id' 0,
-    'url' 'httpec2-13-59-138-16.us-east-2.compute.amazonaws.com8989'
+    'client_id': 0,
+    'url': 'http://ec2-13-59-138-16.us-east-2.compute.amazonaws.com:8989'
 }
