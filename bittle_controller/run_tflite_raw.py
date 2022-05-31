@@ -20,7 +20,8 @@ saved_smoothed_actions_lsts = []
 
 DEAD_ZONE = True
 DEAD_ZONE_AMOUNT = .0175 #1deg
-LARGEST_SHOULDER_ALLOWED_AMOUNT = 30 #deg
+SMALLEST_SHOULDER_ALLOWED_AMOUNT = -30 #deg
+LARGEST_SHOULDER_ALLOWED_AMOUNT = 20 #deg
 SMALLEST_KNEE_ALLOWED_AMOUNT = 30 #deg
 LARGEST_KNEE_ALLOWED_AMOUNT = 50 #deg
 LAST_ACTION = None
@@ -152,7 +153,7 @@ def deploy_on_bittle(interpreter):
         step_real_bittle(smoothed_action, convert=True)
 
         #Sleep
-        time.sleep(.12)
+        time.sleep(.1)
 
         #Read IMU Data
         imu_sensor_real = getBittleIMUSensorInfo()
@@ -205,12 +206,12 @@ def step_real_bittle(action, reorder=True, clip_action=True, convert=False):
         #SHOULDER
         if action[2] >= LARGEST_SHOULDER_ALLOWED_AMOUNT:
             action[2] = LARGEST_SHOULDER_ALLOWED_AMOUNT
-        elif action[2] <= -LARGEST_SHOULDER_ALLOWED_AMOUNT:
-            action[2] = -LARGEST_SHOULDER_ALLOWED_AMOUNT
+        elif action[2] <= SMALLEST_SHOULDER_ALLOWED_AMOUNT:
+            action[2] = SMALLEST_SHOULDER_ALLOWED_AMOUNT
         if action[0] >= LARGEST_SHOULDER_ALLOWED_AMOUNT:
             action[0] = LARGEST_SHOULDER_ALLOWED_AMOUNT
-        elif action[0] <= -LARGEST_SHOULDER_ALLOWED_AMOUNT:
-            action[0] = -LARGEST_SHOULDER_ALLOWED_AMOUNT
+        elif action[0] <= SMALLEST_SHOULDER_ALLOWED_AMOUNT:
+            action[0] = SMALLEST_SHOULDER_ALLOWED_AMOUNT
         
         #KNEE
         if action[1] < SMALLEST_KNEE_ALLOWED_AMOUNT:
