@@ -15,14 +15,14 @@ import platform
 
 FORMAT = '%(asctime)-15s %(name)s - %(levelname)s - %(message)s'
 '''
-Level: The level determines the minimum priority level of messages to log. 
-Messages will be logged in order of increasing severity: 
-DEBUG is the least threatening, 
-INFO is also not very threatening, 
-WARNING needs attention, 
-ERROR needs immediate attention, 
-and CRITICAL means “drop everything and find out what’s wrong.” 
-The default starting point is INFO, 
+Level: The level determines the minimum priority level of messages to log.
+Messages will be logged in order of increasing severity:
+DEBUG is the least threatening,
+INFO is also not very threatening,
+WARNING needs attention,
+ERROR needs immediate attention,
+and CRITICAL means “drop everything and find out what’s wrong.”
+The default starting point is INFO,
 which means that the logging module will automatically filter out any DEBUG messages.
 '''
 # logging.basicConfig(level=logging.DEBUG, format=FORMAT)
@@ -128,7 +128,8 @@ def flushSeialOutput(counterLimit=300):
 
 Communication.Print_Used_Com()
 port = port_list_number
-port = ['COM10']
+#port = ['COM10']
+port = ['/dev/rfcomm0'] #for raspberry pi zero 2W
 total = len(port)
 index = 0
 for index in range(total):
@@ -143,7 +144,7 @@ if len(port) > 1:
     then reopen the terminal and rerun the script.
     """
     if platform.uname()[1] == 'raspberrypi':
-        serialPort = '/dev/ttyS0'  # needed when plug in RaspberryPi
+        serialPort = '/dev/rfcomm0' #'/dev/ttyS0'  # needed when plug in RaspberryPi
         ser = Communication(serialPort, 115200, 0.5)
         logger.info(f"Connect to usb serial port: {serialPort}.")
         serialWriteByte(["d"])
@@ -162,12 +163,12 @@ if len(port) > 1:
             print("to connect to another serial port")
             print("then reopen the terminal and rerun the script")
     else:
-        bluetoothPortIndex = -1    #0 means connetct to port[0]; -1 means connetct to the last port in the list
+        bluetoothPortIndex = 0    #0 means connetct to port[0]; -1 means connetct to the last port in the list
         ser = Communication(port[bluetoothPortIndex], 115200, 0.5)
         logger.info(f"Connect to Bluetooth serial port: {port[bluetoothPortIndex]}.")
 else:
     if platform.uname()[1] == 'raspberrypi':
-        serialPort = '/dev/ttyS0'  # needed when plug in RaspberryPi
+        serialPort = '/dev/rfcomm0' #'/dev/ttyS0'  # needed when plug in RaspberryPi
         ser = Communication(serialPort, 115200, 0.5)
         logger.info(f"Connect to usb serial port: {serialPort}.")
     else:
