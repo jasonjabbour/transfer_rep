@@ -20,8 +20,8 @@ saved_smoothed_actions_lsts = []
 
 DEAD_ZONE = True
 DEAD_ZONE_AMOUNT = .0175 #1deg
-SMALLEST_SHOULDER_ALLOWED_AMOUNT = -30 #deg
-LARGEST_SHOULDER_ALLOWED_AMOUNT = 20 #deg
+SMALLEST_SHOULDER_ALLOWED_AMOUNT = -50 #deg
+LARGEST_SHOULDER_ALLOWED_AMOUNT = 10 #deg
 SMALLEST_KNEE_ALLOWED_AMOUNT = 30 #deg
 LARGEST_KNEE_ALLOWED_AMOUNT = 50 #deg
 LAST_ACTION = None
@@ -212,6 +212,26 @@ def step_real_bittle(action, reorder=True, clip_action=True, convert=False):
             action[0] = LARGEST_SHOULDER_ALLOWED_AMOUNT
         elif action[0] <= SMALLEST_SHOULDER_ALLOWED_AMOUNT:
             action[0] = SMALLEST_SHOULDER_ALLOWED_AMOUNT
+        
+        #KNEE
+        if action[6] < SMALLEST_KNEE_ALLOWED_AMOUNT:
+            action[6] = SMALLEST_KNEE_ALLOWED_AMOUNT
+        elif action[6] > LARGEST_KNEE_ALLOWED_AMOUNT:
+            action[6] = LARGEST_KNEE_ALLOWED_AMOUNT
+        if action[4] < SMALLEST_KNEE_ALLOWED_AMOUNT:
+            action[4] = SMALLEST_KNEE_ALLOWED_AMOUNT
+        elif action[4] > LARGEST_KNEE_ALLOWED_AMOUNT:
+            action[4] = LARGEST_KNEE_ALLOWED_AMOUNT
+
+
+        if action[7] >= LARGEST_SHOULDER_ALLOWED_AMOUNT:
+            action[7] = LARGEST_SHOULDER_ALLOWED_AMOUNT
+        elif action[7] <= SMALLEST_SHOULDER_ALLOWED_AMOUNT:
+            action[7] = SMALLEST_SHOULDER_ALLOWED_AMOUNT
+        if action[5] >= LARGEST_SHOULDER_ALLOWED_AMOUNT:
+            action[5] = LARGEST_SHOULDER_ALLOWED_AMOUNT
+        elif action[5] <= SMALLEST_SHOULDER_ALLOWED_AMOUNT:
+            action[5] = SMALLEST_SHOULDER_ALLOWED_AMOUNT
         
         #KNEE
         if action[1] < SMALLEST_KNEE_ALLOWED_AMOUNT:
