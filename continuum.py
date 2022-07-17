@@ -1,12 +1,20 @@
 #Install:
-#sudo apt-get install ssmtp mailutils
-#pip install mailutils
+#sudp apt update
+#sudo apt-get install ssmtp 
+#sudo apt-get install mailutils
+#sudo apt install python3-pip
+#pip3 install mailutils
+#pip3 install bs4
+#Run:
+#screen
+#python3 continuum.py
 
 from glob import glob
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import time 
 import smtplib
+import datetime
 
 smtpUser = 'govopoly@gmail.com'
 smtpPass = ''
@@ -21,6 +29,8 @@ max_price_looking_for = 3000
 
 update_num = 1
 apartments_emailed = {} #{'apart_num': price}
+
+previous_day = -1
 
 def get_apartment_prices():
     '''Read URL Page and check for new apartments'''
@@ -69,22 +79,20 @@ def get_apartment_prices():
             message+="View here: https://continuumallston.com/live/floor-plans-pricing"
             #Send all messages in one email
             for email_addy in toAdd_lst:
-                send_email_update(message, email_addy)
+                subject = 'Continuum Apartment Update #' + str(update_num)
+                send_email_update(message, email_addy, subject)
                 print("Emails Sent")
             
             update_num+=1
         else:
             print("No new update")
     except Exception as e:
-        #If error send message to admin
-        error_message = 'Continuum.py script error: ' + str(e)
-        send_email_update(error_message, toAdd_admin)
-        print("Error email eent")
+        #Send error to admin
+        send_error_email(str(e), 'get_apartment_prices()')
+        print('Error in get_apartment_prices(): ' + str(e))        
 
-
-def send_email_update(msg, email_addy):
+def send_email_update(msg, email_addy, subject): 
     toAdd = email_addy
-    subject = 'Continuum Apartment Update #' + str(update_num)
     header = 'To: ' + toAdd + '\n' + 'From: ' + fromAdd + '\n' + 'Subject: ' + subject
     body = msg
 
@@ -96,12 +104,56 @@ def send_email_update(msg, email_addy):
 
     s.sendmail(fromAdd, toAdd, header + '\n\n' + body)
     s.quit()
+
+def weekly_status_email():
+    '''Send an email to the admin every Sunday
+       to verify this script is still running
+    '''
+    global previous_day
+
+    try:
+        #Returns 0-6 where 0 is monday and 6 is Sunday
+        day = datetime.datetime.today().weekday()
+
+        #Check if day is Sunday and we havent already sent an email today
+        if (not previous_day == day) and (day == 6):
+            subject = '[Status Check] Continuum.py Script'
+            msg = '>>> Continuum.py script running <<<'
+            send_email_update(msg, toAdd_admin, subject)
+        
+        #update the day today
+        previous_day = day
+
+    except Exception as e:
+        #Send error to admin
+        send_error_email(str(e), 'weekly_status_email()')
+        print('Error in weekly_status_email(): ' + str(e))
+
+def send_error_email(error_message, function_of_error):
+    '''Send error message to admin
     
+    Args:
+        error_message: A string version of the exception
+        function_of_error: name of the function which the error was found.
+    '''
+    #Construct Email Message to include function of error and error message
+    error_message = f'Continuum.py script error in {function_of_error}: ' + str(error_message)
+    #Create the Subject
+    subject = '[ERROR] Continuum.py script'
+    #Send the email to the admin
+    send_email_update(error_message, toAdd_admin, subject)
+    #Print to console
+    print("Error email sent")
+
 def start_sending_emails():
     '''Runner for sending emails'''
 
     while True:
+        # Apartment Prices
         get_apartment_prices()
+        # Status Check
+        weekly_status_email()
+        
         print("Sleeping for 30 Minutes")
         time.sleep(1800) #30 Minutes
 
